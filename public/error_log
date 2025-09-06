@@ -1,0 +1,39 @@
+[14-Aug-2025 19:14:35 UTC] PHP Warning:  require_once(/home/kpftdhra/public_html/public/vendor/autoload.php): Failed to open stream: No such file or directory in /home/kpftdhra/public_html/public/test_cnpay_status.php on line 8
+[14-Aug-2025 19:14:35 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/kpftdhra/public_html/public/vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php82/root/usr/share/pear') in /home/kpftdhra/public_html/public/test_cnpay_status.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/kpftdhra/public_html/public/test_cnpay_status.php on line 8
+[14-Aug-2025 21:24:17 UTC] PHP Warning:  file_get_contents(): https:// wrapper is disabled in the server configuration by allow_url_fopen=0 in /home/kpftdhra/public_html/public/test_proxy.php on line 137
+[14-Aug-2025 21:24:17 UTC] PHP Warning:  file_get_contents(https://painel.appcnpay.com/api/v1/gateway/pix/receive): Failed to open stream: no suitable wrapper could be found in /home/kpftdhra/public_html/public/test_proxy.php on line 137
+[14-Aug-2025 23:08:04 UTC] PHP Warning:  require_once(vendor/autoload.php): Failed to open stream: No such file or directory in /home/kpftdhra/public_html/public/test_deposit_flow.php on line 7
+[14-Aug-2025 23:08:04 UTC] PHP Fatal error:  Uncaught Error: Failed opening required 'vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php82/root/usr/share/pear') in /home/kpftdhra/public_html/public/test_deposit_flow.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/kpftdhra/public_html/public/test_deposit_flow.php on line 7
+[14-Aug-2025 23:08:07 UTC] PHP Warning:  require_once(vendor/autoload.php): Failed to open stream: No such file or directory in /home/kpftdhra/public_html/public/test_deposit_flow.php on line 7
+[14-Aug-2025 23:08:07 UTC] PHP Fatal error:  Uncaught Error: Failed opening required 'vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php82/root/usr/share/pear') in /home/kpftdhra/public_html/public/test_deposit_flow.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/kpftdhra/public_html/public/test_deposit_flow.php on line 7
+[14-Aug-2025 23:10:01 UTC] PHP Warning:  require_once(vendor/autoload.php): Failed to open stream: No such file or directory in /home/kpftdhra/public_html/public/test_deposit_flow.php on line 7
+[14-Aug-2025 23:10:01 UTC] PHP Fatal error:  Uncaught Error: Failed opening required 'vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php82/root/usr/share/pear') in /home/kpftdhra/public_html/public/test_deposit_flow.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/kpftdhra/public_html/public/test_deposit_flow.php on line 7
+[14-Aug-2025 23:10:02 UTC] PHP Warning:  require_once(vendor/autoload.php): Failed to open stream: No such file or directory in /home/kpftdhra/public_html/public/test_deposit_flow.php on line 7
+[14-Aug-2025 23:10:02 UTC] PHP Fatal error:  Uncaught Error: Failed opening required 'vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php82/root/usr/share/pear') in /home/kpftdhra/public_html/public/test_deposit_flow.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/kpftdhra/public_html/public/test_deposit_flow.php on line 7
+[14-Aug-2025 23:10:04 UTC] PHP Warning:  require_once(vendor/autoload.php): Failed to open stream: No such file or directory in /home/kpftdhra/public_html/public/test_deposit_flow.php on line 7
+[14-Aug-2025 23:10:04 UTC] PHP Fatal error:  Uncaught Error: Failed opening required 'vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php82/root/usr/share/pear') in /home/kpftdhra/public_html/public/test_deposit_flow.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/kpftdhra/public_html/public/test_deposit_flow.php on line 7
+[14-Aug-2025 23:17:26 UTC] PHP Warning:  require_once(vendor/autoload.php): Failed to open stream: No such file or directory in /home/kpftdhra/public_html/public/test_cnpay_fixes.php on line 7
+[14-Aug-2025 23:17:26 UTC] PHP Fatal error:  Uncaught Error: Failed opening required 'vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php82/root/usr/share/pear') in /home/kpftdhra/public_html/public/test_cnpay_fixes.php:7
+Stack trace:
+#0 {main}
+  thrown in /home/kpftdhra/public_html/public/test_cnpay_fixes.php on line 7
+[15-Aug-2025 14:33:14 America/Sao_Paulo] PHP Fatal error:  Trait method App\Traits\Gateways\CNPayTrait::buildProxyUrl has not been applied as App\Http\Controllers\Api\Wallet\DepositController::buildProxyUrl, because of collision with App\Traits\Gateways\BsPayTrait::buildProxyUrl in /home/kpftdhra/public_html/app/Http/Controllers/Api/Wallet/DepositController.php on line 16
+[15-Aug-2025 14:35:53 America/Sao_Paulo] PHP Fatal error:  App\Traits\Gateways\BsPayTrait and App\Traits\Gateways\CNPayTrait define the same property ($proxyConfig) in the composition of App\Http\Controllers\Api\Wallet\DepositController. However, the definition differs and is considered incompatible. Class was composed in /home/kpftdhra/public_html/app/Http/Controllers/Api/Wallet/DepositController.php on line 16

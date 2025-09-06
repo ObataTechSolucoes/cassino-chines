@@ -1,0 +1,21 @@
+# Impede execução de arquivos PHP ou similares
+<FilesMatch "\.(php|php3|php4|php5|phtml|phar)$">
+    Require all denied
+</FilesMatch>
+
+# Impede listagem de arquivos do diretório
+Options -Indexes
+
+# (Opcional) Permitir acesso somente a tipos seguros
+# Permitir acesso somente a tipos seguros, incluindo formatos modernos de imagem
+<FilesMatch "\.(jpe?g|png|gif|webp|bmp|svg|ico|pdf|txt|avif|heif|mp3|mp4)$">
+    Require all granted
+</FilesMatch>
+
+
+# Impede upload malicioso com extensões duplas (ex: shell.php.png)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_URI} "\.php(\.|$)" [NC]
+    RewriteRule ^.*$ - [F,L]
+</IfModule>
