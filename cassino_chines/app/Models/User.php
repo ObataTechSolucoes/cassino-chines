@@ -236,10 +236,25 @@ public function getBalanceAttribute()
     // Calcula o saldo total como depósitos - saques
     return $this->totalDeposits - $this->totalWithdrawals;
 }
-public function withdrawals(): HasMany
-{
-    return $this->hasMany(Withdrawal::class);
-}
+    public function withdrawals(): HasMany
+    {
+        return $this->hasMany(Withdrawal::class);
+    }
+
+    public function affiliateSetting(): HasOne
+    {
+        return $this->hasOne(UserAffiliateSetting::class);
+    }
+
+    public function referredUsers(): HasMany
+    {
+        return $this->hasMany(User::class, 'inviter', 'id');
+    }
+
+    public function scopeAffiliates($query)
+    {
+        return $query->whereHas('roles', fn($q) => $q->where('name', 'afiliado'));
+    }
 
 
 

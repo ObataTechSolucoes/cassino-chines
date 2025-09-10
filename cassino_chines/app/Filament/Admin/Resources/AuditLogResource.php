@@ -16,9 +16,9 @@ class AuditLogResource extends Resource
     protected static ?string $model = AuditLog::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
-    protected static ?string $navigationGroup = 'Sistema';
+    protected static ?string $navigationGroup = 'Auditoria';
     protected static ?string $modelLabel = 'Logs de Auditoria';
-    protected static ?string $navigationLabel = 'Logs de Auditoria';
+    protected static ?string $navigationLabel = 'Logs em Tempo Real';
     protected static ?int $navigationSort = 9999;
 
     public static function canViewAny(): bool
@@ -33,6 +33,7 @@ class AuditLogResource extends Resource
     public static function table(Tables\Table $table): Tables\Table
     {
         return $table
+            ->poll('5s')
             ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('created_at')->label('Data')->since()->sortable(),

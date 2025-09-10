@@ -8,21 +8,14 @@ use App\Models\Setting;
 use App\Models\User;
 use App\Models\Wallet;
 use App\Models\Withdrawal;
-use App\Models\AffiliateWithdraw;
-use App\Models\SuitPayPayment;
 use App\Notifications\NewWithdrawalNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Filament\Notifications\Notification;
-use App\Traits\Gateways\DigitoPayTrait;
-use App\Traits\Gateways\BsPayTrait;
-use App\Traits\Gateways\EzzepayTrait;
-use App\Traits\Gateways\SuitPayTrait;
-use Illuminate\Support\Facades\Log; 
+use Illuminate\Support\Facades\Log;
 
 class WalletController extends Controller
 {
-    use BsPayTrait, SuitPayTrait, EzzepayTrait, DigitoPayTrait;
     /**
      * Display a listing of the resource.
      */
@@ -59,128 +52,6 @@ class WalletController extends Controller
         }
     }
 
-    public function withdrawalFromModal($id, Request $request)
-    {
-        $setting = Core::getSetting();
-        $resultado = null;
-        $tipo = $request->input("action");
-    
-        Log::info('Iniciando processo de saque', [
-            'withdrawal_id' => $id,
-            'tipo' => $tipo,
-            'gateway' => $setting->default_gateway
-        ]);
-    
-        switch ($setting->default_gateway) {
-            case 'suitpay':
-                $withdrawal = Withdrawal::find($id);
-                if ($tipo == "afiliado") {
-                    $withdrawal = AffiliateWithdraw::find($id);
-                }
-    
-                if (!$withdrawal) {
-                    Log::error('Saque não encontrado', ['withdrawal_id' => $id]);
-                    break;
-                }
-    
-                $withdrawal->update(['status' => 1]);
-                Log::info('Status do saque atualizado para 1', ['withdrawal_id' => $withdrawal->id]);
-    
-                $suitpayment = SuitPayPayment::create([
-                    'withdrawal_id' => $withdrawal->id,
-                    'user_id'       => $withdrawal->user_id,
-                    'pix_key'       => $withdrawal->pix_key,
-                    'pix_type'      => $withdrawal->pix_type,
-                    'cpf'           => $withdrawal->cpf,
-                    'amount'        => $withdrawal->amount,
-                    'observation'   => 'Saque direto',
-                ]);
-    
-                Log::info('Pagamento SuitPay criado', [
-                    'suitpayment_id' => $suitpayment->id,
-                    'amount' => $suitpayment->amount
-                ]);
-    
-                $parm = [
-                    'pix_key'           => $withdrawal->pix_key,
-                    'pix_type'          => $withdrawal->pix_type,
-                    'cpf'               => $withdrawal->cpf,
-                    'amount'            => $withdrawal->amount,
-                    'suitpayment_id'    => $suitpayment->id
-                ];
-    
-                $resultado = self::suitPayPixCashOut($parm);
-                Log::info('Resultado suitPayPixCashOut', ['resultado' => $resultado]);
-                break;
-    
-            case 'digitopay':
-                Log::info('Chamando saque via DigitoPay', ['withdrawal_id' => $id]);
-                $resultado = self::pixCashOutDigito($id, $tipo);
-                Log::info('Resultado pixCashOutDigito', ['resultado' => $resultado]);
-                break;
-    
-            case 'bspay':
-                Log::info('Chamando saque via BsPay', ['withdrawal_id' => $id]);
-                $resultado = self::pixCashOutBsPay($id, $tipo);
-                Log::info('Resultado pixCashOutBsPay', ['resultado' => $resultado]);
-                break;
-    
-            case 'ezzepay':
-                Log::info('Chamando saque via EzzePay', ['withdrawal_id' => $id]);
-                $resultado = self::pixCashOutEzze($id, $tipo);
-                Log::info('Resultado pixCashOutEzze', ['resultado' => $resultado]);
-                break;
-        }
-    
-        if ($resultado == true) {
-            Log::info('Saque solicitado com sucesso', ['withdrawal_id' => $id]);
-    
-            Notification::make()
-                ->title('Saque solicitado')
-                ->body('Saque solicitado com sucesso')
-                ->success()
-                ->send();
-    
-            return back();
-        } else {
-            // Verificar se é um erro específico retornado pelo BsPayTrait
-            if (is_array($resultado) && isset($resultado['success']) && !$resultado['success']) {
-                $errorMessage = $resultado['error_message'] ?? 'Erro desconhecido';
-                $errorCode = $resultado['error_code'] ?? 'UNKNOWN';
-                
-                Log::error('Erro específico ao solicitar o saque', [
-                    'withdrawal_id' => $id,
-                    'error_code' => $errorCode,
-                    'error_message' => $errorMessage
-                ]);
-                
-                // Mensagens específicas baseadas no código de erro
-                $userMessage = match($errorCode) {
-                    'FORBIDDEN' => 'IP não autorizado pela CNPay. Tentando sem proxy...',
-                    'GATEWAY_INVALID_DATA' => 'Dados inválidos enviados para o gateway',
-                    'UNAUTHORIZED' => 'Credenciais inválidas do gateway',
-                    'TIMEOUT' => 'Timeout na comunicação com o gateway',
-                    default => $errorMessage
-                };
-                
-                Notification::make()
-                    ->title('Erro no saque')
-                    ->body($userMessage)
-                    ->danger()
-                    ->send();
-            } else {
-                Log::error('Erro ao solicitar o saque', ['withdrawal_id' => $id]);
-                
-                Notification::make()
-                    ->title('Erro no saque')
-                    ->body('Erro ao solicitar o saque')
-                    ->danger()
-                    ->send();
-            }
-    
-            return back();
-        }
-    }
     /**
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
