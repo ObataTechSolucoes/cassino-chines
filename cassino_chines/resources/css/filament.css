@@ -1,0 +1,27 @@
+@import '../../vendor/filament/filament/resources/css/app.css';
+
+:root {
+  --primary-50: 248 250 252;
+  --primary-100: 244 244 244;
+  --primary-500: 161 161 161;
+  --primary-600: 123 123 123;
+  --danger-500: 239 68 68;
+}
+
+.dark {
+  --primary-800: 62 62 62;
+  --primary-900: 44 44 44;
+}
+
+/* Força as cores nos componentes Filament */
+.fi-sidebar-item-active {
+  background-color: rgb(var(--primary-50)) !important;
+}
+
+.dark .fi-sidebar-item-active {
+  background-color: rgb(var(--primary-900)) !important;
+}
+
+.fi-primary-600 {
+  color: rgb(var(--primary-600)) !important;
+}
