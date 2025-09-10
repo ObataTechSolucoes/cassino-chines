@@ -8,6 +8,7 @@ use Filament\Resources\Pages\ListRecords;
 class ListAuditLogs extends ListRecords
 {
     protected static string $resource = AuditLogResource::class;
+    protected static ?string $pollingInterval = '5s';
 
     protected function getHeaderActions(): array
     {

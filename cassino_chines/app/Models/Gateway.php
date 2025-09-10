@@ -24,38 +24,7 @@ class Gateway extends Model
      */
     protected $fillable = [
 
-        // Suitpay
-        'suitpay_uri',
-        'suitpay_cliente_id',
-        'suitpay_cliente_secret',
-        'suitpay_split',
-        'suitpay_split_name',
-
-        // Stripe
-        'stripe_production',
-        'stripe_public_key',
-        'stripe_secret_key',
-        'stripe_webhook_key',
-
-
-        // digitopay
-        'digitopay_uri',
-        'digitopay_cliente_id',
-        'digitopay_cliente_secret',
-
-        //
-        'ezzebank_uri',
-        'ezzebank_cliente_id',
-        'ezzebank_cliente_secret',
-        'ezze_user',
-        'ezze_senha',
-      
-
-        'bspay_uri',
-        'bspay_cliente_id',
-        'bspay_cliente_secret',
-
-        // CNPay - Novo provedor
+        // CNPay - único gateway suportado
         'cnpay_uri',
         'cnpay_public_key',
         'cnpay_secret_key',
@@ -68,87 +37,6 @@ class Gateway extends Model
     /**
      * Get the user's first name.
      */
-    protected function digitopayClienteId(): Attribute
-    {
-        return Attribute::make(
-            get: fn(?string $value) => env('APP_DEMO') ? '*********************' : $value,
-        );
-    }
-
-    /**
-     * Get the user's first name.
-     */
-    protected function digitopayClienteSecret(): Attribute
-    {
-        return Attribute::make(
-            get: fn(?string $value) => env('APP_DEMO') ? '*********************' : $value,
-        );
-    }
-
-    /**
-     * Get the user's first name.
-     */
-    protected function publicKey(): Attribute
-    {
-        return Attribute::make(
-            get: fn(?string $value) => env('APP_DEMO') ? '*********************' : $value,
-        );
-    }
-
-    /**
-     * Get the user's first name.
-     */
-    protected function privateKey(): Attribute
-    {
-        return Attribute::make(
-            get: fn(?string $value) => env('APP_DEMO') ? '*********************' : $value,
-        );
-    }
-
-    /**
-     * Get the user's first name.
-     */
-    protected function suitpayClienteId(): Attribute
-    {
-        return Attribute::make(
-            get: fn(?string $value) => env('APP_DEMO') ? '*********************' : $value,
-        );
-    }
-
-    /**
-     * Get the user's first name.
-     */
-    protected function suitpayClienteSecret(): Attribute
-    {
-        return Attribute::make(
-            get: fn(?string $value) => env('APP_DEMO') ? '*********************' : $value,
-        );
-    }
-
-    /**
-     * Get the user's first name.
-     */
-
-
-    /**
-     * Get the user's first name.
-     */
-    protected function stripePublicKey(): Attribute
-    {
-        return Attribute::make(
-            get: fn(?string $value) => env('APP_DEMO') ? '*********************' : $value,
-        );
-    }
-
-    /**
-     * Get the user's first name.
-     */
-    protected function stripeSecretKey(): Attribute
-    {
-        return Attribute::make(
-            get: fn(?string $value) => env('APP_DEMO') ? '*********************' : $value,
-        );
-    }
 
     /**
      * Proteger chave pública do CNPay em modo demo

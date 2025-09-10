@@ -9,11 +9,17 @@ use App\Models\Withdrawal;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\RateLimiter;
 use App\Models\AproveWithdrawal;
 use App\Models\AproveSaveSetting;
 use Illuminate\Support\Facades\Hash;
@@ -121,8 +127,21 @@ class WithdrawalResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('pix_key')
                     ->label('Chave Pix'),
-                Tables\Columns\IconColumn::make('status')
-                    ->boolean(),
+                BadgeColumn::make('status')
+                    ->label('Status')
+                    ->colors([
+                        'warning' => fn($state) => $state === Withdrawal::STATUS_PENDING,
+                        'info' => fn($state) => $state === Withdrawal::STATUS_REVIEW,
+                        'success' => fn($state) => $state === Withdrawal::STATUS_APPROVED,
+                        'danger' => fn($state) => $state === Withdrawal::STATUS_DENIED,
+                    ])
+                    ->formatStateUsing(fn($state) => match ($state) {
+                        Withdrawal::STATUS_PENDING => 'Pendente',
+                        Withdrawal::STATUS_REVIEW => 'Em Revisão',
+                        Withdrawal::STATUS_APPROVED => 'Aprovado',
+                        Withdrawal::STATUS_DENIED => 'Negado',
+                        default => 'Desconhecido',
+                    }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Data')
                     ->dateTime()
@@ -137,7 +156,7 @@ class WithdrawalResource extends Resource
                     ->label('Cancelar')
                     ->icon('heroicon-o-banknotes')
                     ->color('danger')
-                    ->visible(fn(Withdrawal $withdrawal): bool => !$withdrawal->status)
+                    ->visible(fn(Withdrawal $withdrawal): bool => $withdrawal->status === Withdrawal::STATUS_PENDING)
                     ->action(function (Withdrawal $withdrawal) {
                         \Filament\Notifications\Notification::make()
                             ->title('Cancelar Saque')
@@ -165,7 +184,7 @@ class WithdrawalResource extends Resource
                     ->label('Fazer pagamento')
                     ->icon('heroicon-o-banknotes')
                     ->color('success')
-                    ->visible(fn(Withdrawal $withdrawal): bool => !$withdrawal->status)
+                    ->visible(fn(Withdrawal $withdrawal): bool => $withdrawal->status === Withdrawal::STATUS_PENDING)
                     ->form([
                         Forms\Components\TextInput::make('password')
                             ->label('Digite a senha de aprovação DE SAQUES')
@@ -239,6 +258,92 @@ class WithdrawalResource extends Resource
         ])
             ->bulkActions([
                Tables\Actions\BulkActionGroup::make([
+                    BulkAction::make('approve')
+                        ->label('Aprovar')
+                        ->form([
+                            TextInput::make('password')
+                                ->label('Senha de Aprovação')
+                                ->password()
+                                ->required(),
+                            Textarea::make('notes')
+                                ->label('Notas de Revisão'),
+                        ])
+                        ->action(function (Collection $records, array $data) {
+                            $key = 'withdrawal-approve:' . auth()->id();
+                            if (RateLimiter::tooManyAttempts($key, 5)) {
+                                Notification::make()
+                                    ->title('Limite atingido')
+                                    ->danger()
+                                    ->send();
+                                return;
+                            }
+                            RateLimiter::hit($key, 60);
+                            $withdrawalPassword = \DB::table('aprove_withdrawals')->value('approval_password');
+                            if (! Hash::check($data['password'], $withdrawalPassword)) {
+                                Notification::make()
+                                    ->title('Senha incorreta')
+                                    ->danger()
+                                    ->send();
+                                return;
+                            }
+                            foreach ($records as $record) {
+                                $record->update([
+                                    'status' => Withdrawal::STATUS_APPROVED,
+                                    'review_notes' => $data['notes'] ?? null,
+                                    'reviewed_at' => now(),
+                                ]);
+                            }
+                            Notification::make()
+                                ->title('Saques aprovados')
+                                ->success()
+                                ->send();
+                        }),
+                    BulkAction::make('deny')
+                        ->label('Negar')
+                        ->color('danger')
+                        ->form([
+                            TextInput::make('password')
+                                ->label('Senha de Aprovação')
+                                ->password()
+                                ->required(),
+                            Textarea::make('reason')
+                                ->label('Motivo de Negação')
+                                ->required(),
+                            FileUpload::make('attachment')
+                                ->label('Anexo')
+                                ->directory('withdrawals/attachments'),
+                        ])
+                        ->action(function (Collection $records, array $data) {
+                            $key = 'withdrawal-deny:' . auth()->id();
+                            if (RateLimiter::tooManyAttempts($key, 5)) {
+                                Notification::make()
+                                    ->title('Limite atingido')
+                                    ->danger()
+                                    ->send();
+                                return;
+                            }
+                            RateLimiter::hit($key, 60);
+                            $withdrawalPassword = \DB::table('aprove_withdrawals')->value('approval_password');
+                            if (! Hash::check($data['password'], $withdrawalPassword)) {
+                                Notification::make()
+                                    ->title('Senha incorreta')
+                                    ->danger()
+                                    ->send();
+                                return;
+                            }
+                            foreach ($records as $record) {
+                                $record->update([
+                                    'status' => Withdrawal::STATUS_DENIED,
+                                    'denial_reason' => $data['reason'],
+                                    'review_attachment' => $data['attachment'] ?? null,
+                                    'reviewed_at' => now(),
+                                ]);
+                            }
+                            Notification::make()
+                                ->title('Saques negados')
+                                ->success()
+                                ->send();
+                        }),
                     // Ação de exclusão em massa com confirmação de senha
                     Tables\Actions\DeleteBulkAction::make()
                         ->modalHeading('Confirme a exclusão em massa')

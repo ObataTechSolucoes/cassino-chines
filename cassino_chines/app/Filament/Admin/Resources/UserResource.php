@@ -140,45 +140,38 @@ class UserResource extends Resource
                         Forms\Components\DateTimePicker::make('email_verified_at')
                             ->label('Verificação E-mail'),
                     ])->columns(3),
-                Forms\Components\Section::make()
+                Forms\Components\Section::make('Afiliado')
+                    ->relationship('affiliateSetting')
                     ->schema([
-                        Forms\Components\TextInput::make('affiliate_revenue_share')
-                            ->label('Revenue Share (%)')
-                            ->required()
-                            ->default(2)
-                            ->numeric(),
-                        Forms\Components\TextInput::make('affiliate_revenue_share_fake')
-                            ->label('Revenue Share Fake (%)')
-                            ->numeric(),
-                        Forms\Components\TextInput::make('affiliate_cpa')
-                            ->label('CPA')
-                            ->default(10)
-                            ->required()
-                            ->numeric(),
-                        Forms\Components\TextInput::make('affiliate_baseline')
-                            ->label('Baseline')
-                            ->default(40)
-                            ->required()
-                            ->numeric(),
-                    ])->columns(4),
-                 Forms\Components\Section::make()
-                    ->schema([
-                        Forms\Components\TextInput::make('affiliate_bau_value')
-                            ->label('Valor de cada bau')
-                            ->default(10)
-                            ->required()
-                            ->numeric(),
-                        Forms\Components\TextInput::make('affiliate_bau_baseline')
-                            ->label('Depósito minimo necessario')
-                            ->default(40)
-                            ->required()
-                            ->numeric(),
-                        Forms\Components\TextInput::make('affiliate_bau_aposta')
-                            ->label('Apostas Necessarias')
-                            ->default(40)
-                            ->required()
-                            ->numeric(),
-                    ])->columns(4),
+                        Forms\Components\Select::make('affiliate_plan_id')
+                            ->label('Plano de comissão')
+                            ->options(\App\Models\AffiliatePlan::query()->pluck('name', 'id'))
+                            ->searchable()
+                            ->placeholder('Usar plano padrão'),
+                        Forms\Components\Toggle::make('override_enabled')
+                            ->label('Override individual')
+                            ->reactive()
+                            ->dehydrated(false),
+                        Forms\Components\Select::make('override_type')
+                            ->label('Tipo de override')
+                            ->options(['GGR' => 'GGR', 'REV_CPA' => 'REV+CPA'])
+                            ->visible(fn ($get) => $get('override_enabled')),
+                        Forms\Components\TextInput::make('override_ggr_share')
+                            ->label('GGR Share')
+                            ->numeric()
+                            ->visible(fn ($get) => $get('override_enabled') && $get('override_type') === 'GGR'),
+                        Forms\Components\TextInput::make('override_rev_share')
+                            ->label('REV Share')
+                            ->numeric()
+                            ->visible(fn ($get) => $get('override_enabled') && $get('override_type') === 'REV_CPA'),
+                        Forms\Components\TextInput::make('override_cpa_amount')
+                            ->label('CPA Amount')
+                            ->numeric()
+                            ->visible(fn ($get) => $get('override_enabled') && $get('override_type') === 'REV_CPA'),
+                        Forms\Components\Textarea::make('note')
+                            ->label('Observação de afiliação')
+                            ->columnSpanFull(),
+                    ])->columns(2),
                 Forms\Components\Section::make()
                     ->schema([
                         Forms\Components\Toggle::make('banned')
