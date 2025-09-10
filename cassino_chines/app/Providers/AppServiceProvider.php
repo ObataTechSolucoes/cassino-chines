@@ -15,7 +15,6 @@ use Filament\Support\Assets\Js;
 use App\Observers\ModelAuditObserver;
 use App\Models\{Setting, SettingMail, Gateway, GamesKey, ConfigPlayFiver, Game, SpinConfigs, Role, Permission, User, Vip, PostNotification, Mission, MissionDeposit, Benefit, BenefitRule, UserBenefit};
 
-
 class AppServiceProvider extends ServiceProvider
 {
     /**
