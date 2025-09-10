@@ -308,15 +308,7 @@ class Settings extends Page implements HasForms
                         //  Toggle::make('disable_spin')
                         //     ->label('Disable Spin')
                         // ,
-                        Toggle::make('suitpay_is_enable')
-                            ->label('SuitPay Ativo')
-                        ,
-                        //Toggle::make('ezzebank_is_enable')
-                        //    ->label('EzzeBank Ativo')
-                        //,
-                        // Toggle::make('stripe_is_enable')
-                        //     ->label('Stripe Ativo')
-                        // ,
+                        // Gateways antigos removidos; apenas CNPay é suportado
                     ])->columns(4),
             ])
             ->statePath('data');

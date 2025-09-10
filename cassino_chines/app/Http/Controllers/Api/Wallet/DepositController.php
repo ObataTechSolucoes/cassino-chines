@@ -4,10 +4,6 @@ namespace App\Http\Controllers\Api\Wallet;
 
 use App\Http\Controllers\Controller;
 use App\Models\Deposit;
-use App\Traits\Gateways\SuitpayTrait;
-use App\Traits\Gateways\BsPayTrait;
-use App\Traits\Gateways\DigitoPayTrait;
-use App\Traits\Gateways\EzzepayTrait;
 use App\Traits\Gateways\CNPayTrait;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -15,7 +11,7 @@ use Illuminate\Support\Facades\Log;
 
 class DepositController extends Controller
 {
-    use SuitpayTrait, BsPayTrait, DigitoPaytrait, EzzepayTrait, CNPayTrait;
+    use CNPayTrait;
 
     /**
      * @param Request $request
@@ -32,53 +28,9 @@ class DepositController extends Controller
             'timestamp' => now()->toISOString()
         ]);
 
-        // Se não foi especificado gateway, selecionar automaticamente
-        if (!$request->gateway) {
-            Log::info('DepositController - Gateway não especificado, selecionando automaticamente');
-            
-            $gatewaySelection = app(\App\Http\Controllers\Api\Wallet\GatewaySelectionController::class);
-            $gatewayResponse = $gatewaySelection->selectGateway($request);
-            
-            if (!$gatewayResponse->getData()->success) {
-                Log::warning('DepositController - Nenhum gateway disponível para seleção automática');
-                return response()->json(['error' => 'Nenhum gateway disponível'], 400);
-            }
-            
-            $request->merge(['gateway' => $gatewayResponse->getData()->gateway]);
-            Log::info('DepositController - Gateway selecionado automaticamente', [
-                'gateway_selecionado' => $request->gateway
-            ]);
-        }
-         
-        switch ($request->gateway) {
-           
-            case 'suitpay':
-                Log::info('DepositController - Usando gateway SuitPay');
-                return self::suitPayRequestQrcode($request);
-                
-            case 'bspay':
-                Log::info('DepositController - Usando gateway BsPay');
-                return $this->requestQrcodeBsPay($request);
-                
-            case 'ezzepay':
-                Log::info('DepositController - Usando gateway EzzePay');
-                return self::requestQrcodeEzze($request);
-                
-            case 'digitopay':
-                Log::info('DepositController - Usando gateway DigitoPay');
-                return self::requestQrcodeDigito($request);
-                
-            case 'cnpay':
-                Log::info('DepositController - Usando gateway CNPay');
-                return self::requestQrcodeCNPay($request);
-                
-            default:
-                Log::warning('DepositController - Gateway não suportado', [
-                    'gateway' => $request->gateway,
-                    'user_id' => auth('api')->id()
-                ]);
-                return response()->json(['error' => 'Gateway not supported: ' . $request->gateway], 400);
-        }
+        // Forçar o uso do gateway CNPay
+        Log::info('DepositController - Forçando uso do gateway CNPay');
+        return self::requestQrcodeCNPay($request);
     }
 
     public function consultStatusTransactionPix(Request $request)
@@ -86,18 +38,9 @@ class DepositController extends Controller
         Log::info('DepositController - consultStatusTransactionPix chamado', [
             'user_id' => auth('api')->id(),
             'request_data' => $request->all(),
-            'gateway' => $request->gateway
         ]);
 
-        // Verificar se é uma transação CNPay
-        if ($request->gateway === 'cnpay' || $request->has('cnpay_transaction')) {
-            Log::info('DepositController - Consultando status CNPay');
-            return $this->consultCNPayStatus($request);
-        }
-        
-        // Para outros gateways, usar método padrão
-        Log::info('DepositController - Usando método padrão para consulta de status');
-        return self::consultStatusTransaction($request);
+        return $this->consultCNPayStatus($request);
     }
 
     /**

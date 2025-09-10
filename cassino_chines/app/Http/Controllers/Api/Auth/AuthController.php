@@ -31,10 +31,8 @@ class AuthController extends Controller
             $setting = \Helper::getSetting();
 
             $rules = [
-                  'name' => 'required|string|unique:users', // Adicionado unique:users para o campo name
-    'email' => 'required|email|unique:users',
-    'password' => ['required', Rules\Password::min(8)],
-
+                'phone' => 'required|string|unique:users,phone',
+                'password' => ['required', 'confirmed', Rules\Password::min(8)],
             ];
 
             $validator = \Validator::make($request->all(), $rules);
@@ -43,7 +41,9 @@ class AuthController extends Controller
                 return response()->json($validator->errors(), 400);
             }
 
-            $userData = $request->only(['name', 'password', 'email']);
+            $userData = $request->only(['phone', 'password']);
+            // usar o número de telefone como nome padrão
+            $userData['name'] = $request->phone;
 
             // Gerar o código de afiliado
             $userData['inviter_code'] = $this->generateAffiliateCode();
@@ -117,7 +117,7 @@ class AuthController extends Controller
                     }
                 }
 
-                $credentials = $request->only(['email', 'password']);
+                $credentials = $request->only(['phone', 'password']);
                 $token = auth('api')->attempt($credentials);
                 if (!$token) {
                     return response()->json(['error' => 'Unauthorized'], 401);
@@ -151,8 +151,8 @@ class AuthController extends Controller
    public function login()
 {
     try {
-        // Alterar para buscar as credenciais usando 'name' ao invés de 'email'
-        $credentials = request(['name', 'password']);
+        // Autenticar usando telefone e senha
+        $credentials = request(['phone', 'password']);
 
         // Tentar autenticar o usuário com base nas credenciais fornecidas
         if (!$token = auth('api')->attempt($credentials)) {

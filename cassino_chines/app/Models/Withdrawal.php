@@ -12,6 +12,11 @@ Withdrawal extends Model
 {
     use HasFactory;
 
+    public const STATUS_PENDING = 0;
+    public const STATUS_REVIEW = 1;
+    public const STATUS_APPROVED = 2;
+    public const STATUS_DENIED = 3;
+
     /**
      * The database table used by the model.
      *
@@ -41,7 +46,16 @@ Withdrawal extends Model
         'cpf',
         'gateway',
         'transaction_id',
-        'webhook_data'
+        'webhook_data',
+        'review_notes',
+        'denial_reason',
+        'review_attachment',
+        'reviewed_at',
+    ];
+
+    protected $casts = [
+        'status' => 'integer',
+        'reviewed_at' => 'datetime',
     ];
 
 

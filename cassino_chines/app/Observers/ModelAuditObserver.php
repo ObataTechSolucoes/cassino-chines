@@ -95,10 +95,13 @@ class ModelAuditObserver
         $class = class_basename($model);
         return match ($class) {
             'ConfigPlayFiver' => 'games.rtp_limits',
+            'Game' => 'games.management',
+            'SpinConfigs' => 'games.spin_config',
             'Role', 'Permission' => 'auth.roles_permissions',
             'Gateway' => 'payments.gateway',
             'GamesKey' => 'games.keys',
             'Setting', 'SettingMail' => 'system.settings',
+            'Benefit', 'BenefitRule', 'UserBenefit' => 'benefits.center',
             default => 'model.' . $class,
         };
     }
