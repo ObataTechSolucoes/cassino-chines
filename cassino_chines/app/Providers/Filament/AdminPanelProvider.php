@@ -42,6 +42,10 @@ use App\Filament\Admin\Resources\AproveWithdrawalResource;
 use App\Filament\Admin\Resources\AffiliateHistoryResource;
 use App\Filament\Admin\Resources\AproveSaveSettingResource;
 use App\Filament\Admin\Resources\AccountWithdrawResource;
+use App\Filament\Admin\Resources\BenefitResource;
+use App\Filament\Admin\Resources\BonusRuleResource;
+use App\Filament\Admin\Resources\AffiliatePlanResource;
+use App\Filament\Admin\Resources\CommissionLogResource;
 use App\Filament\Admin\Resources\RoleResource;
 use App\Filament\Admin\Resources\PermissionResource;
 use App\Http\Middleware\CheckAdmin;
@@ -171,6 +175,15 @@ class AdminPanelProvider extends PanelProvider
                     ->items([
                         ...collect(PostNotificationResource::getNavigationItems())->map(fn ($item) => $item->icon('icon-noti')),
                         ...collect(MissionDepositResource::getNavigationItems())->map(fn ($item) => $item->icon('icon-mission')),
+                        ...collect(AffiliatePlanResource::getNavigationItems())->map(fn ($item) => $item->icon('heroicon-o-briefcase')),
+                        ...collect(CommissionLogResource::getNavigationItems())->map(fn ($item) => $item->icon('heroicon-o-currency-dollar')),
+                    ]),
+
+                // Benefícios
+                NavigationGroup::make('Benefícios')
+                    ->items([
+                        ...collect(BenefitResource::getNavigationItems())->map(fn ($item) => $item->icon('heroicon-o-gift')),
+                        ...collect(BonusRuleResource::getNavigationItems())->map(fn ($item) => $item->icon('heroicon-o-adjustments-horizontal')),
                     ]),
 
                 // Sistema

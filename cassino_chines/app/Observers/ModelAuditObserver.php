@@ -101,6 +101,7 @@ class ModelAuditObserver
             'Gateway' => 'payments.gateway',
             'GamesKey' => 'games.keys',
             'Setting', 'SettingMail' => 'system.settings',
+            'Benefit', 'BenefitRule', 'UserBenefit' => 'benefits.center',
             default => 'model.' . $class,
         };
     }
