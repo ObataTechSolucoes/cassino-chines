@@ -24,6 +24,7 @@ use App\Filament\Admin\Resources\GGRGamesDrakonResource;
 use App\Filament\Admin\Resources\GGRGamesResource;
 use App\Filament\Admin\Resources\GGRGamesFiverResource;
 use App\Filament\Admin\Resources\GGRGamesWorldSlotResource;
+use App\Filament\Admin\Resources\AuditLogResource;
 //use App\Filament\Admin\Resources\MissionResource;
 use App\Filament\Admin\Resources\MissionDepositResource;
 use App\Filament\Admin\Resources\MusicResource;
@@ -214,6 +215,12 @@ class AdminPanelProvider extends PanelProvider
                             ->url(url('/clear'), shouldOpenInNewTab: false)
                             ->icon('icon-limp')
                             ->visible(fn (): bool => auth()->user()->hasRole('admin')),
+                    ]),
+
+                // Auditoria
+                NavigationGroup::make('Auditoria')
+                    ->items([
+                        ...collect(AuditLogResource::getNavigationItems())->map(fn ($item) => $item->icon('heroicon-o-clipboard-document-check')),
                     ]),
             ]);
         })
