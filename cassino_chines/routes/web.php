@@ -66,20 +66,12 @@ Route::post('/cnpay/withdraw/callback', function (Request $request) {
                     'status' => $status
                 ]);
                 
-                // FINALIZAR SAQUE E DEBITAR VALOR DO USUÁRIO
-                $result = \App\Traits\Gateways\BsPayTrait::finalizeWithdrawalBsPay($withdrawId);
-                
-                if ($result) {
-                    \Illuminate\Support\Facades\Log::info('Saque finalizado e valor debitado com sucesso', [
-                        'transaction_id' => $withdrawId
-                    ]);
-                } else {
-                    \Illuminate\Support\Facades\Log::error('Falha ao finalizar saque', [
-                        'transaction_id' => $withdrawId
-                    ]);
-                }
-                
-                return response()->json(['status' => 'success', 'message' => 'Saque processado']);
+                // Saques são finalizados manualmente para CNPay
+                \Illuminate\Support\Facades\Log::info('Processamento manual necessário para saque CNPay', [
+                    'transaction_id' => $withdrawId
+                ]);
+
+                return response()->json(['status' => 'success', 'message' => 'Saque registrado']);
             } else {
                 \Illuminate\Support\Facades\Log::info('Saque não aprovado ainda', [
                     'transaction_id' => $withdrawId,
@@ -122,20 +114,12 @@ Route::post('/cnpay/affiliate-withdraw/callback', function (Request $request) {
                     'status' => $status
                 ]);
                 
-                // FINALIZAR SAQUE E DEBITAR VALOR DO USUÁRIO
-                $result = \App\Traits\Gateways\BsPayTrait::finalizeAffiliateWithdrawalBsPay($withdrawId);
-                
-                if ($result) {
-                    \Illuminate\Support\Facades\Log::info('Saque de afiliado finalizado e valor debitado com sucesso', [
-                        'transaction_id' => $withdrawId
-                    ]);
-                } else {
-                    \Illuminate\Support\Facades\Log::error('Falha ao finalizar saque de afiliado', [
-                        'transaction_id' => $withdrawId
-                    ]);
-                }
-                
-                return response()->json(['status' => 'success', 'message' => 'Saque de afiliado processado']);
+                // Saques de afiliado são finalizados manualmente para CNPay
+                \Illuminate\Support\Facades\Log::info('Processamento manual necessário para saque de afiliado CNPay', [
+                    'transaction_id' => $withdrawId
+                ]);
+
+                return response()->json(['status' => 'success', 'message' => 'Saque de afiliado registrado']);
             } else {
                 \Illuminate\Support\Facades\Log::info('Saque de afiliado não aprovado ainda', [
                     'transaction_id' => $withdrawId,

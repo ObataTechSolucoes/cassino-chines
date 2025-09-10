@@ -12,7 +12,6 @@ use App\Filament\Admin\Pages\LayoutCssCustom;
 use App\Filament\Admin\Pages\SettingMailPage;
 use App\Filament\Admin\Pages\SelectThemePage;
 //use App\Filament\Admin\Pages\SettingSpin;
-use App\Filament\Admin\Pages\SuitPayPaymentPage;
 use App\Filament\Admin\Resources\AffiliateWithdrawResource;
 use App\Filament\Admin\Resources\AffiliateInfoResource;
 use App\Filament\Admin\Resources\BannerResource;

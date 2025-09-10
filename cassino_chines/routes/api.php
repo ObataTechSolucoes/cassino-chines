@@ -15,11 +15,9 @@ use App\Http\Controllers\SenSaqueController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\Api\Profile\VipController;
 use App\Http\Controllers\MissionDepositController;
-use App\Http\Controllers\Gateway\SuitPayController;
 use App\Http\Controllers\PostNotificationsController;
 use App\Http\Controllers\BonusInitialController;
 use App\Http\Controllers\Api\Profile\WalletController;
-use App\Http\Controllers\Gateway\BsPayController;
 use App\Http\Controllers\GameController;
 
 
