@@ -200,11 +200,20 @@ class CasinoKpiOverview extends BaseWidget
         $start = $this->filters['startDate'] ?? null;
         $end = $this->filters['endDate'] ?? null;
 
-        if ($range) {
+        // Caso personalizado: usa as datas informadas
+        if ($range === 'custom') {
+            if ($start && $end) {
+                return [Carbon::parse($start)->startOfDay(), Carbon::parse($end)->endOfDay()];
+            }
+            // sem ambas as datas, cai no padrão abaixo
+        } elseif ($range === 'all') {
+            // sem filtro global
+            return [null, null];
+        } elseif ($range) {
             [$start, $end] = $this->resolveQuickRange($range);
         }
 
-        // Sem filtro: últimos 30 dias por padrão
+        // Sem filtro ou incompleto: últimos 30 dias por padrão
         if (! $start || ! $end) {
             $start = Carbon::now()->subDays(29)->startOfDay();
             $end = Carbon::now()->endOfDay();
@@ -225,6 +234,11 @@ class CasinoKpiOverview extends BaseWidget
             '7' => [$now->copy()->subDays(6)->startOfDay(), $now->copy()->endOfDay()],
             '30' => [$now->copy()->subDays(29)->startOfDay(), $now->copy()->endOfDay()],
             '90' => [$now->copy()->subDays(89)->startOfDay(), $now->copy()->endOfDay()],
+            'this_month' => [$now->copy()->startOfMonth(), $now->copy()->endOfMonth()],
+            'last_month' => [
+                $now->copy()->subMonth()->startOfMonth(),
+                $now->copy()->subMonth()->endOfMonth(),
+            ],
             'all' => [null, null], // interpretado como sem filtro nas queries (when($start && $end))
             default => [null, null],
         };

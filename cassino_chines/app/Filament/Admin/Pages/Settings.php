@@ -737,7 +737,7 @@ class Settings extends Page implements HasForms
                         ->success()
                         ->send();
 
-                    redirect(route('filament.admin.pages.dashboard-admin'));
+                    redirect(route('filament.admin.pages.dashboard'));
 
                 }
             }

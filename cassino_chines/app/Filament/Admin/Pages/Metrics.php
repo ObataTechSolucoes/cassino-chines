@@ -2,13 +2,6 @@
 
 namespace App\Filament\Admin\Pages;
 
-use App\Filament\Admin\Widgets\StatsOverview;
-use App\Livewire\AdminWidgets;
-use App\Filament\Admin\Widgets\UserGrowthChart;
-use App\Filament\Admin\Widgets\DepositGrowthChart;
-use App\Filament\Admin\Widgets\UserListWidget;
-use App\Filament\Admin\Widgets\GameHistoryWidget;
-use App\Livewire\WalletOverview;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Get;
@@ -17,21 +10,21 @@ use Filament\Pages\Dashboard\Actions\FilterAction;
 use Filament\Pages\Dashboard\Concerns\HasFiltersAction;
 use Filament\Pages\Dashboard\Concerns\HasFiltersForm;
 
-class DashboardAdmin extends \Filament\Pages\Dashboard
+class Metrics extends \Filament\Pages\Dashboard
 {
     use HasFiltersForm, HasFiltersAction;
 
-    // Mantém o nome de rota padrão: filament.admin.pages.dashboard
-    protected static ?string $slug = 'dashboard';
+    protected static ?string $navigationIcon = 'heroicon-o-chart-bar';
+    protected static string $routePath = '/metrics';
 
     public function getHeading(): string
     {
-        return ''; // Remove o título
+        return 'Métricas & Insights';
     }
 
     public function filtersForm(Form $form): Form
     {
-        return $form->schema(self::unifiedDateFilterSchema());
+        return $form->schema($this->unifiedDateFilterSchema());
     }
 
     protected function getHeaderActions(): array
@@ -39,32 +32,20 @@ class DashboardAdmin extends \Filament\Pages\Dashboard
         return [
             FilterAction::make()
                 ->label('Filtro')
-                ->form(self::unifiedDateFilterSchema()) // Esquema unificado
+                ->form($this->unifiedDateFilterSchema()),
         ];
-    }
-
-    public static function canAccess(): bool
-    {
-        return auth()->user()->hasRole('admin');
     }
 
     public function getWidgets(): array
     {
         return [
-            \App\Filament\Admin\Widgets\CasinoKpiOverview::class,
-            \App\Filament\Admin\Widgets\KpiTrendsChart::class,
-            // Mantidos por relevância, após os KPIs principais
-            UserGrowthChart::class,
-            DepositGrowthChart::class,
-            UserListWidget::class,
-            GameHistoryWidget::class
-        ]; // Fechamento correto do array
+            \App\Filament\Admin\Widgets\AdvancedMetricsOverview::class,
+            \App\Filament\Admin\Widgets\FinancialPerformanceChart::class,
+            \App\Filament\Admin\Widgets\AiInsightsWidget::class,
+        ];
     }
 
-    /**
-     * Esquema unificado de período: presets + personalizado
-     */
-    private static function unifiedDateFilterSchema(): array
+    private function unifiedDateFilterSchema(): array
     {
         return [
             Select::make('range')

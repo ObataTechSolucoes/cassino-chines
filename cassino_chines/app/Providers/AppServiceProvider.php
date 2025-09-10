@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Filament\Support\Assets\Js;
+use App\Observers\ModelAuditObserver;
+use App\Models\{Setting, SettingMail, Gateway, GamesKey, ConfigPlayFiver, Role, Permission, User, Vip, PostNotification, Mission, MissionDeposit};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -58,5 +60,25 @@ class AppServiceProvider extends ServiceProvider
             /** @return ViewContract */
             fn (): ViewContract => view('filament.admin-theme'),
         );
+
+        // Registra auditoria nos modelos críticos
+        foreach ([
+            Setting::class,
+            SettingMail::class,
+            Gateway::class,
+            GamesKey::class,
+            ConfigPlayFiver::class,
+            Role::class,
+            Permission::class,
+            User::class,
+            Vip::class,
+            PostNotification::class,
+            Mission::class,
+            MissionDeposit::class,
+        ] as $modelClass) {
+            if (class_exists($modelClass)) {
+                $modelClass::observe(ModelAuditObserver::class);
+            }
+        }
     }
 }

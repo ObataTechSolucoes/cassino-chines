@@ -6319,6 +6319,29 @@ CREATE TABLE `withdrawals` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
 --
+-- Estrutura para tabela `audit_logs`
+--
+
+CREATE TABLE `audit_logs` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `event` varchar(50) NOT NULL,
+  `module` varchar(120) DEFAULT NULL,
+  `target_type` varchar(160) DEFAULT NULL,
+  `target_id` varchar(64) DEFAULT NULL,
+  `route` varchar(191) DEFAULT NULL,
+  `method` varchar(10) DEFAULT NULL,
+  `ip` varchar(45) DEFAULT NULL,
+  `user_agent` text DEFAULT NULL,
+  `request` longtext DEFAULT NULL,
+  `before` longtext DEFAULT NULL,
+  `after` longtext DEFAULT NULL,
+  `message` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
 -- Índices para tabelas despejadas
 --
 
@@ -6435,6 +6458,17 @@ ALTER TABLE `site_visits`
   ADD PRIMARY KEY (`id`),
   ADD KEY `site_visits_visited_at_idx` (`visited_at`),
   ADD KEY `site_visits_user_id_idx` (`user_id`);
+
+--
+-- Índices de tabela `audit_logs`
+--
+ALTER TABLE `audit_logs`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `audit_logs_user_id_idx` (`user_id`),
+  ADD KEY `audit_logs_event_idx` (`event`),
+  ADD KEY `audit_logs_module_idx` (`module`),
+  ADD KEY `audit_logs_target_id_idx` (`target_id`),
+  ADD KEY `audit_logs_created_at_idx` (`created_at`);
 
 --
 -- Índices de tabela `failed_jobs`
@@ -7081,6 +7115,12 @@ ALTER TABLE `websockets_statistics_entries`
 --
 ALTER TABLE `withdrawals`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT de tabela `audit_logs`
+--
+ALTER TABLE `audit_logs`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de tabela `site_visits`

@@ -101,7 +101,7 @@ class SettingSpin extends Page
                         ->success()
                         ->send();
 
-                    redirect(route('filament.admin.pages.dashboard-admin'));
+                    redirect(route('filament.admin.pages.dashboard'));
                 }
             }
         } catch (Halt $exception) {

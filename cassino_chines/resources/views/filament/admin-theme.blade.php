@@ -104,6 +104,36 @@
     filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
   }
 
+  /* Stats Overview — modern neon cards */
+  .filament-stats-overview-widget .filament-stats-overview-widget-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--adm-radius-md);
+    background: linear-gradient(180deg, rgba(18,26,49,1) 0%, rgba(14,21,39,1) 100%);
+    border: 1px solid var(--adm-border);
+  }
+  .filament-stats-overview-widget .filament-stats-overview-widget-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    border-radius: inherit;
+    padding: 1px; /* gradient border */
+    background: linear-gradient(135deg, rgba(99,102,241,.5), rgba(34,211,238,.35));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    pointer-events: none;
+  }
+  .filament-stats-overview-widget .filament-stats-overview-widget-card:hover {
+    box-shadow: 0 0 0 1px rgba(99,102,241,.2), 0 8px 25px rgba(2,8,23,.45);
+    transform: translateY(-1px);
+    transition: all .2s ease;
+  }
+  .filament-stats-overview-widget-card-title {
+    color: #a5b4fc !important; /* indigo-300 */
+    font-weight: 600 !important;
+  }
+  .filament-stats-overview-widget-card-value { font-size: 1.35rem !important; color: #e5e7eb !important; }
+  .filament-stats-overview-widget-card-description { color: var(--adm-muted) !important; }
+
   /* Vendor: filament-page-with-sidebar tweaks (topbar as segmented control) */
   .filament-page-with-sidebar-topbar nav {
     border-radius: 12px;

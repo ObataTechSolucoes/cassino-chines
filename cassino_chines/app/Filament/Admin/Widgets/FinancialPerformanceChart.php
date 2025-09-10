@@ -12,12 +12,12 @@ use Carbon\Carbon;
 use Filament\Widgets\LineChartWidget;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
 
-class KpiTrendsChart extends LineChartWidget
+class FinancialPerformanceChart extends LineChartWidget
 {
     use InteractsWithPageFilters;
 
-    protected static ?string $heading = 'Tendências';
-    protected static ?int $sort = 2;
+    protected static ?string $heading = 'Performance Financeira Mensal';
+    protected static ?int $sort = 3;
 
     protected function getData(): array
     {
@@ -48,7 +48,7 @@ class KpiTrendsChart extends LineChartWidget
                     'data' => $deposits,
                     'borderColor' => 'rgba(34,197,94,1)',
                     'backgroundColor' => 'rgba(34,197,94,0.15)',
-                    'tension' => 0.3,
+                    'tension' => 0.35,
                     'fill' => true,
                 ],
                 [
@@ -56,7 +56,7 @@ class KpiTrendsChart extends LineChartWidget
                     'data' => $withdrawals,
                     'borderColor' => 'rgba(239,68,68,1)',
                     'backgroundColor' => 'rgba(239,68,68,0.15)',
-                    'tension' => 0.3,
+                    'tension' => 0.35,
                     'fill' => true,
                 ],
                 [
@@ -64,7 +64,7 @@ class KpiTrendsChart extends LineChartWidget
                     'data' => $ggrs,
                     'borderColor' => 'rgba(99,102,241,1)',
                     'backgroundColor' => 'rgba(99,102,241,0.15)',
-                    'tension' => 0.3,
+                    'tension' => 0.35,
                     'fill' => true,
                 ],
             ],
@@ -99,7 +99,6 @@ class KpiTrendsChart extends LineChartWidget
         $end = $this->filters['endDate'] ?? null;
 
         if ($range === 'custom') {
-            // usa as datas escolhidas, se válidas
             if ($start && $end) {
                 $start = Carbon::parse($start)->startOfDay();
                 $end = Carbon::parse($end)->endOfDay();
@@ -113,13 +112,13 @@ class KpiTrendsChart extends LineChartWidget
                 '90' => [$now->copy()->subDays(89)->startOfDay(), $now->copy()->endOfDay()],
                 'this_month' => [$now->copy()->startOfMonth(), $now->copy()->endOfMonth()],
                 'last_month' => [$now->copy()->subMonth()->startOfMonth(), $now->copy()->subMonth()->endOfMonth()],
-                'all' => [$now->copy()->subDays(29)->startOfDay(), $now->copy()->endOfDay()], // cap 30 dias no gráfico
+                'all' => [$now->copy()->subDays(29)->startOfDay(), $now->copy()->endOfDay()],
                 default => [$now->copy()->subDays(13)->startOfDay(), $now->copy()->endOfDay()],
             };
         }
 
         if (! $start || ! $end) {
-            $start = $now->copy()->subDays(13)->startOfDay();
+            $start = $now->copy()->subDays(29)->startOfDay();
             $end = $now->copy()->endOfDay();
         }
 
@@ -127,8 +126,9 @@ class KpiTrendsChart extends LineChartWidget
         $end = Carbon::parse($end);
 
         $days = $start->diffInDays($end) + 1;
-        $days = max(1, min($days, 90)); // limitar a 90 pontos por legibilidade
+        $days = max(1, min($days, 90));
 
         return [$start, $end, $days];
     }
 }
+

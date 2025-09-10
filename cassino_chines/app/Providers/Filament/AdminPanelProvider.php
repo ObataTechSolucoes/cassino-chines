@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
 use App\Filament\Admin\Pages\AdvancedPage;
 use App\Filament\Admin\Pages\DashboardAdmin;
+use App\Filament\Admin\Pages\Metrics;
 use App\Filament\Admin\Pages\GamesKeyPage;
 use App\Filament\Admin\Pages\GatewayPage;
 use App\Filament\Admin\Pages\LayoutCssCustom;
@@ -61,6 +62,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use App\Http\Middleware\AuditRequest;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -107,6 +109,11 @@ class AdminPanelProvider extends PanelProvider
                             ->label(fn (): string => __('filament-panels::pages/dashboard.title'))
                             ->url(fn (): string => DashboardAdmin::getUrl())
                             ->icon('icon-dash')
+                            ->visible(fn (): bool => auth()->user()->hasRole('admin')),
+                        NavigationItem::make('metrics')
+                            ->label('Métricas')
+                            ->url(fn (): string => Metrics::getUrl())
+                            ->icon('heroicon-m-chart-bar')
                             ->visible(fn (): bool => auth()->user()->hasRole('admin')),
                     ]),
 
@@ -220,6 +227,7 @@ class AdminPanelProvider extends PanelProvider
             SubstituteBindings::class,
             DisableBladeIconComponents::class,
             DispatchServingFilamentEvent::class,
+            AuditRequest::class,
         ])
         ->authMiddleware([
             Authenticate::class,
