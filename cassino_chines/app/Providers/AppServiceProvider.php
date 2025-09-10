@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Filament\Support\Assets\Js;
 use App\Observers\ModelAuditObserver;
-use App\Models\{Setting, SettingMail, Gateway, GamesKey, ConfigPlayFiver, Role, Permission, User, Vip, PostNotification, Mission, MissionDeposit};
+use App\Models\{Setting, SettingMail, Gateway, GamesKey, ConfigPlayFiver, Game, SpinConfigs, Role, Permission, User, Vip, PostNotification, Mission, MissionDeposit, Benefit, BenefitRule, UserBenefit};
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -68,6 +68,8 @@ class AppServiceProvider extends ServiceProvider
             Gateway::class,
             GamesKey::class,
             ConfigPlayFiver::class,
+            Game::class,
+            SpinConfigs::class,
             Role::class,
             Permission::class,
             User::class,
@@ -75,6 +77,9 @@ class AppServiceProvider extends ServiceProvider
             PostNotification::class,
             Mission::class,
             MissionDeposit::class,
+            Benefit::class,
+            BenefitRule::class,
+            UserBenefit::class,
         ] as $modelClass) {
             if (class_exists($modelClass)) {
                 $modelClass::observe(ModelAuditObserver::class);
